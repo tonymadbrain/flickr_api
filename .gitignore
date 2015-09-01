@@ -1,0 +1,5 @@
+/config
+/img
+/public/index.html
+*.sqlite3
+.DS_store

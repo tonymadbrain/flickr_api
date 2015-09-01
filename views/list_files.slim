@@ -1,0 +1,21 @@
+h2 Files
+form(method="post" enctype='multipart/form-data' action='/delete')
+  table.table.table-condensed
+    thead
+      tr
+        th
+        th Название файла
+        th Ссылка
+        th Превью
+    tbody
+      - @files.each do |file|
+        tr
+          td
+            input type="checkbox" name="checkbox" value="#{file.filename}"
+          td #{file.filename}
+          td
+            a target="_blank" href="#{file.url}" #{file.url.slice!(0, 30)}
+          td
+            img src="#{file.preview}"
+  input(type='submit' value='Delete' class="btn btn-danger btn-block")
+
