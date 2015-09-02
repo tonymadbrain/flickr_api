@@ -4,30 +4,17 @@ require 'flickraw'
 require 'uri'
 require 'sinatra/reloader' if development?
 require 'yaml'
-require 'dm-core'
-require 'dm-validations'
-require 'dm-timestamps'
-require 'dm-migrations'
-require 'dm-transactions'
+# require 'dm-core'
+# require 'dm-validations'
+# require 'dm-timestamps'
+# require 'dm-migrations'
+# require 'dm-transactions'
+require 'data_mapper'
 require File.expand_path(File.dirname(__FILE__) + '/config/sinatra')
 
 
 flickr_cred = YAML.load_file('./config/flickr.yml')
 DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/mydatabase.sqlite3")
-
-def timenow
-  date_and_time = "%Y-%b-%d %H:%M:%S"
-  time          = Time.now.strftime(date_and_time)
-  return time
-end
-
-#auth
-FlickRaw.api_key = flickr_cred[:api_key]
-FlickRaw.shared_secret = flickr_cred[:shared_secret]
-flickr.access_token = flickr_cred[:access_token]
-flickr.access_secret = flickr_cred[:access_secret]
-user = flickr_cred[:user]
-login = flickr.test.login
 
 #models
 class Files
@@ -48,17 +35,37 @@ class BackgroundJob
 end
 
 # DataMapper.auto_upgrade!
-DataMapper.auto_migrate!
+# DataMapper.auto_migrate!
+DataMapper.auto_migrate! unless DataMapper.repository(:default).adapter.storage_exists?('files')
 DataMapper.finalize
+
+def timenow
+  date_and_time = "%Y-%b-%d %H:%M:%S"
+  time          = Time.now.strftime(date_and_time)
+  return time
+end
+
+#auth
+FlickRaw.api_key = flickr_cred[:api_key]
+FlickRaw.shared_secret = flickr_cred[:shared_secret]
+flickr.access_token = flickr_cred[:access_token]
+flickr.access_secret = flickr_cred[:access_secret]
+user = flickr_cred[:user]
+login = flickr.test.login
 
 #actions
 get '/' do
+  @files = Files.all
+  if @files.nil?
+    DataMapper.auto_migrate!
+  end
   @files = Files.all
   slim :list_files, layout: :index
 end
 
 get '/update' do
   @files = Files.all
+  # create_tables if @files.nil?
   BackgroundJob.create(status: false) unless BackgroundJob.get(1)
   @job = BackgroundJob.get(1)
   if @job.status
