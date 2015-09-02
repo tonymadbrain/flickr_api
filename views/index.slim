@@ -11,36 +11,30 @@ html
   body
     .navbar.navbar-default.navbar-static-top.navbar-fixed-top
       .container-fluid
-        .navbar-header
-          a.navbar-toggle data-target=".navbar-collapse" data-toggle="collapse" type="button"
-          span.sr-only Навигация
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-          a.navbar-brand href="/"  Flickr
-        #navbar-ex-collapse.collapse.navbar-collapse
-          .nav.navbar-nav.navbar-right
-            / li
-            a href="/update" class="btn btn-primary btn-block" Update
-              / a class="btn btn-primary navbar-btn" Update
-              / input.btn.btn-primary.navbar-btn Upload
-              / input.btn.btn-primary.navbar-btn Delete
-    .container
+        .row
+          .col-md-10.col-md-offset-1
+            .navbar-header
+              a.navbar-toggle data-target=".navbar-collapse" data-toggle="collapse" type="button"
+              span.sr-only Навигация
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+              a.navbar-brand href="/"  Flickr
+            #navbar-ex-collapse.collapse.navbar-collapse
+              .nav.navbar-nav.navbar-right
+                span #{@files.count} - записей!
+                a href="/update" class="btn btn-primary navbar-btn" Update
+                a href="/update" class="btn btn-danger navbar-btn" Delete
+    .container-fluid style="margin-top: 50px;"
       .row
-        .col-md-3
-          h2 Menu
-          a href="/update" class="btn btn-primary btn-block" Update
-          / a href="/delete" class="btn btn-danger btn-block" Delete
+        .col-md-10.col-md-offset-1
           h2 File uploader
           form(method="post" enctype='multipart/form-data' action='/upload')
             input(type='file' name='myfile')
             br
             input(type='submit' value='Upload' class="btn btn-success btn-block")
-          h2 Info
-          / div data-spy="affix" data-offset-top="60" class="panel panel-default affix-top right-panel"
-          div.well
-            p #{@files.count} - записей!
-        .col-md-9
+      .row
+        .col-md-10.col-md-offset-1
           == yield
 
 
