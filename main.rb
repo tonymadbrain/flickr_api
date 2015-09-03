@@ -68,9 +68,10 @@ get '/update' do
     slim :updating_in_progress, layout: :index
   else
     Thread.new do
-      @files.each do |f|
-        f.destroy!
-      end
+      # @files.each do |f|
+      #   f.destroy!
+      # end
+      DataMapper.auto_migrate!
       photos = flickr.photos.search(user_id: user)
 
       photos.each do |photo|
