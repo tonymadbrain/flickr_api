@@ -4,11 +4,6 @@ require 'flickraw'
 require 'uri'
 require 'sinatra/reloader' if development?
 require 'yaml'
-# require 'dm-core'
-# require 'dm-validations'
-# require 'dm-timestamps'
-# require 'dm-migrations'
-# require 'dm-transactions'
 require 'data_mapper'
 require File.expand_path(File.dirname(__FILE__) + '/config/sinatra')
 
@@ -93,16 +88,18 @@ get '/update' do
   end
 end
 
-post '/delete' do
+get '/delete' do
   @files = Files.all
   @file_name = params['checkbox']
   # debug params
   # content_type :json
   # {"params" => params}.to_json
+
   @file_for_delete = Files.first(filename: @file_name)
   flickr.photos.delete(:photo_id => @file_for_delete.photo_id)
   @file_for_delete.destroy
-  slim :file_deleted, layout: :index
+  # slim :file_deleted, layout: :index
+  slim :file_deleted_ajax
 end
 
 post '/upload' do
