@@ -15,9 +15,7 @@ DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/mydatabase.sqlite3")
 class Files
   include DataMapper::Resource
 
-  # property :id,         Serial
   property :id,         String, key: true
-  # property :photo_id,   String
   property :filename,   String
   property :url,        String
   property :preview,    String
@@ -30,8 +28,6 @@ class BackgroundJob
   property :status, Boolean
 end
 
-# DataMapper.auto_upgrade!
-# DataMapper.auto_migrate!
 DataMapper.auto_migrate! unless DataMapper.repository(:default).adapter.storage_exists?('files')
 DataMapper.finalize
 
@@ -61,16 +57,12 @@ end
 
 get '/update' do
   @files = Files.all
-  # create_tables if @files.nil?
   BackgroundJob.create(status: false) unless BackgroundJob.get(1)
   @job = BackgroundJob.get(1)
   if @job.status
     slim :updating_in_progress, layout: :index
   else
     Thread.new do
-      # @files.each do |f|
-      #   f.destroy!
-      # end
       DataMapper.auto_migrate!
       photos = flickr.photos.search(user_id: user)
 
@@ -96,16 +88,10 @@ post '/delete' do
   # content_type :json
   # {"params" => params}.to_json
   params['checkbox'].each do |i|
-    # @file_for_delete = Files.first(filename: @file_name)
-    # file = Files.first(id: i)
     flickr.photos.delete(:photo_id => i)
     Files.first(id: i).destroy
   end
 
-  # @file_for_delete = Files.first(filename: @file_name)
-  # flickr.photos.delete(:photo_id => @file_for_delete.photo_id)
-  # @file_for_delete.destroy
-  # slim :file_deleted, layout: :index
   slim :file_deleted_ajax
 end
 
