@@ -46,17 +46,20 @@ user = flickr_cred[:user]
 login = flickr.test.login
 
 #actions
-get '/' do
+
+before do
   @files = Files.all
-  if @files.nil?
-    DataMapper.auto_migrate!
-  end
+end
+
+get '/' do
+  # @files = Files.all
+  DataMapper.auto_migrate! if @files.nil?
   @files = Files.all
   slim :list_files, layout: :index
 end
 
 get '/update' do
-  @files = Files.all
+  # @files = Files.all
   BackgroundJob.create(status: false) unless BackgroundJob.get(1)
   @job = BackgroundJob.get(1)
   if @job.status
@@ -64,14 +67,20 @@ get '/update' do
   else
     Thread.new do
       DataMapper.auto_migrate!
-      photos = flickr.photos.search(user_id: user)
 
-      photos.each do |photo|
-        info = flickr.photos.getInfo(photo_id: photo.id)
-        url = FlickRaw.url_o(info)
-        url_small = FlickRaw.url_t(info)
-        @file = Files.first_or_create(id: photo.id, filename: info["title"], url: url, preview: url_small)
-        @file.save!
+      begin
+        photos = flickr.photos.search(user_id: user)
+
+        photos.each do |photo|
+          info = flickr.photos.getInfo(photo_id: photo.id)
+          url = FlickRaw.url_o(info)
+          url_small = FlickRaw.url_t(info)
+          @file = Files.first_or_create(id: photo.id, filename: info["title"], url: url, preview: url_small)
+          @file.save!
+        end
+      rescue
+        @job.update(status: false)
+        puts "Problem with updating!"
       end
 
       @job.update(status: false)
@@ -83,20 +92,23 @@ get '/update' do
 end
 
 post '/delete' do
-  @files = Files.all
+  # @files = Files.all
   # debug params
   # content_type :json
   # {"params" => params}.to_json
-  params['checkbox'].each do |i|
-    flickr.photos.delete(:photo_id => i)
-    Files.first(id: i).destroy
+  begin
+    params['checkbox'].each do |i|
+      flickr.photos.delete(:photo_id => i)
+      Files.first(id: i).destroy
+    end
+  rescue
+    slim :error_deleting
   end
-
-  slim :file_deleted_ajax
+  slim :file_deleted
 end
 
 post '/upload' do
-  @files = Files.all
+  # @files = Files.all
   filename = params['myfile'][:filename]
   file = params['myfile'][:tempfile].path
   time = timenow
