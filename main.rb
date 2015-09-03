@@ -15,8 +15,9 @@ DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/mydatabase.sqlite3")
 class Files
   include DataMapper::Resource
 
-  property :id,         Serial
-  property :photo_id,   String
+  # property :id,         Serial
+  property :id,         String, key: true
+  # property :photo_id,   String
   property :filename,   String
   property :url,        String
   property :preview,    String
@@ -73,10 +74,10 @@ get '/update' do
       photos = flickr.photos.search(user_id: user)
 
       photos.each do |photo|
-        info = flickr.photos.getInfo(:photo_id => photo.id)
+        info = flickr.photos.getInfo(photo_id: photo.id)
         url = FlickRaw.url_o(info)
         url_small = FlickRaw.url_t(info)
-        @file = Files.first_or_create(photo_id: photo.id, filename: info["title"], url: url, preview: url_small)
+        @file = Files.first_or_create(id: photo.id, filename: info["title"], url: url, preview: url_small)
         @file.save!
       end
 
@@ -93,11 +94,11 @@ post '/delete' do
   # debug params
   # content_type :json
   # {"params" => params}.to_json
-  params['checkbox'].each do |f|
+  params['checkbox'].each do |i|
     # @file_for_delete = Files.first(filename: @file_name)
-    file = Files.first(filename: f)
-    flickr.photos.delete(:photo_id => file.photo_id)
-    file.destroy
+    # file = Files.first(id: i)
+    flickr.photos.delete(:photo_id => i)
+    Files.first(id: i).destroy
   end
 
   # @file_for_delete = Files.first(filename: @file_name)

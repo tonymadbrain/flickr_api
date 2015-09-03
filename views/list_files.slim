@@ -10,9 +10,9 @@ form#delete_form
         th Превью
     tbody
       - @files.each do |file|
-        tr id="#{file.filename}"
+        tr id="#{file.id}"
           td
-            input type="checkbox" name="checkbox" value="#{file.filename}"
+            input type="checkbox" name="checkbox" value="#{file.id}"
           td #{file.filename}
           td
             a target="_blank" href="#{file.url}" #{file.url.slice!(0, 30)}
