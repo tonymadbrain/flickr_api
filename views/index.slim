@@ -6,30 +6,34 @@ html
     meta content="" name="description"
     meta content="" name="author"
     link href="css/bootstrap.min.css" rel="stylesheet"
+    link href="css/custom.css" rel="stylesheet"
     script src="js/jquery.min.js" type="text/javascript"
     script src="js/bootstrap.min.js" type="text/javascript"
     javascript:
       $(function (){
-        $('#delete_link').click(function(del_files){
-          //this happens if form is submitted
-          //prevent the default behavior of a form (it should do nothing in our case)
-          del_files.preventDefault();
-          //send an ajax request to our action
+        var link = $('#delete_link');
+        link.on('click', function(e){
+         var check_item = $('input:checked','#delete_form'),
+         _arr = [];
+          e.preventDefault();
+          check_item.each(function(item, index){
+            _arr.push($(index).prop('value'));
+          });
+          console.log(_arr);
           $.ajax({
+            type: "POST",
             url: "/delete",
-            //serialize the form and use it as data for our ajax request
-            //data: $(this).serialize(),
-            data: "checkbox="+$("#delete_form input:first").val(),
-            //the type of data we are expecting back from server, could be json too
+            data: {"checkbox":_arr},
             dataType: "html",
             success: function(data) {
-              //if our ajax request is successful, replace the content of our viz div with the response data
+              $.map(_arr, function(value, index) {
+                document.getElementById([value]).remove();
+              });
               $('#alerts').html(data);
-              // alert(data);
             }
           });
-        });
-      })
+        })
+      });
   body
     .navbar.navbar-default.navbar-static-top.navbar-fixed-top
       .container-fluid
@@ -43,10 +47,10 @@ html
               span.icon-bar
               a.navbar-brand href="/"  Flickr
             #navbar-ex-collapse.collapse.navbar-collapse
-              .nav.navbar-nav
-                span id="alerts" #{@files.count} - записей!
-                a href="/update" class="btn btn-primary navbar-btn" Update
-                a href="#" id="delete_link" class="btn btn-danger navbar-btn" Delete
+              span.navbar-brand style="margin-left: 50px;" id="alerts" #{@files.count} - записей!
+              .nav.navbar-nav.navbar-right
+                a href="/update" class="btn btn-primary navbar-btn custom-navbar-buttons" Update
+                a href="#" id="delete_link" class="btn btn-danger navbar-btn custom-navbar-buttons" Delete
     .container-fluid style="margin-top: 50px;"
       .row
         .col-md-10.col-md-offset-1

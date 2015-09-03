@@ -10,7 +10,7 @@ form#delete_form
         th Превью
     tbody
       - @files.each do |file|
-        tr
+        tr id="#{file.filename}"
           td
             input type="checkbox" name="checkbox" value="#{file.filename}"
           td #{file.filename}

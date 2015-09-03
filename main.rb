@@ -88,16 +88,21 @@ get '/update' do
   end
 end
 
-get '/delete' do
+post '/delete' do
   @files = Files.all
-  @file_name = params['checkbox']
   # debug params
   # content_type :json
   # {"params" => params}.to_json
+  params['checkbox'].each do |f|
+    # @file_for_delete = Files.first(filename: @file_name)
+    file = Files.first(filename: f)
+    flickr.photos.delete(:photo_id => file.photo_id)
+    file.destroy
+  end
 
-  @file_for_delete = Files.first(filename: @file_name)
-  flickr.photos.delete(:photo_id => @file_for_delete.photo_id)
-  @file_for_delete.destroy
+  # @file_for_delete = Files.first(filename: @file_name)
+  # flickr.photos.delete(:photo_id => @file_for_delete.photo_id)
+  # @file_for_delete.destroy
   # slim :file_deleted, layout: :index
   slim :file_deleted_ajax
 end
