@@ -14,7 +14,8 @@ Trying work with Flickr API for downloading and uploading photos, for my blog - 
 * ~~Generate only data and show through slim template~~
 * ~~Delete one file~~
 * ~~Updating in background~~
-* Pretty wiews and some js
+* Pretty wiews?
+* ~~Some js for ajax~~
 * Upload many files in one time
 * ~~Selecting from DB~~
 * ~~Updating DB~~

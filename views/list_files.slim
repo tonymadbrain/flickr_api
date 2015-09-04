@@ -1,6 +1,6 @@
 h2 Files
-form(method="post" enctype='multipart/form-data' action='/delete')
-  table.table.table-condensed
+form#delete_form
+  table.table.table-condensed.table-responsive
     thead
       tr
         th
@@ -9,13 +9,12 @@ form(method="post" enctype='multipart/form-data' action='/delete')
         th Превью
     tbody
       - @files.each do |file|
-        tr
+        tr id="#{file.id}"
           td
-            input type="checkbox" name="checkbox" value="#{file.filename}"
+            input type="checkbox" name="checkbox" value="#{file.id}"
           td #{file.filename}
           td
             a target="_blank" href="#{file.url}" #{file.url.slice!(0, 30)}
           td
             img src="#{file.preview}"
-  input(type='submit' value='Delete' class="btn btn-danger btn-block")
 

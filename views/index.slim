@@ -6,33 +6,37 @@ html
     meta content="" name="description"
     meta content="" name="author"
     link href="css/bootstrap.min.css" rel="stylesheet"
+    link href="css/custom.css" rel="stylesheet"
     script src="js/jquery.min.js" type="text/javascript"
     script src="js/bootstrap.min.js" type="text/javascript"
+    script src="js/custom.js" type="text/javascript"
   body
-    .navbar.navbar-default.navbar-static-top
-      .container.container-fluid
-        .navbar-header
-          a.navbar-toggle data-target=".navbar-collapse" data-toggle="collapse" type="button"
-          span.sr-only Навигация
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-          a.navbar-brand href="/"  Flickr
-    .container
+    .navbar.navbar-default.navbar-static-top.navbar-fixed-top
+      .container-fluid
+        .row
+          .col-md-10.col-md-offset-1
+            .navbar-header
+              a.navbar-toggle data-target=".navbar-collapse" data-toggle="collapse" type="button"
+              span.sr-only Навигация
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+              a.navbar-brand href="/"  Flickr
+            #navbar-ex-collapse.collapse.navbar-collapse
+              span.navbar-brand style="margin-left: 50px;" id="alerts" #{@files.count} - записей!
+              .nav.navbar-nav.navbar-right
+                a href="#" id="update_link" class="btn btn-primary navbar-btn custom-navbar-buttons" Update
+                a href="#" id="delete_link" class="btn btn-danger navbar-btn custom-navbar-buttons" Delete
+    .container-fluid style="margin-top: 50px;"
       .row
-        .col-md-3
-          h2 Menu
-          a href="/update" class="btn btn-primary btn-block" Update
-          / a href="/delete" class="btn btn-danger btn-block" Delete
+        .col-md-10.col-md-offset-1
           h2 File uploader
-          form(method="post" enctype='multipart/form-data' action='/upload')
-            input(type='file' name='myfile')
+          form(id="upload_form" method="post" enctype='multipart/form-data' action='/upload')
+            input(type='file' name='file')
             br
             input(type='submit' value='Upload' class="btn btn-success btn-block")
-          h2 Info
-          div.well
-            p #{@files.count} - записей!
-        .col-md-9
+      .row
+        .col-md-10.col-md-offset-1
           == yield
 
 
