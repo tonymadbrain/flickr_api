@@ -53,11 +53,6 @@ before do
   @files = Files.all
 end
 
-get '/test' do
-  status = BackgroundJob.get(1)
-  return status.to_json
-end
-
 get '/' do
   slim :list_files, layout: :index
 end
@@ -125,11 +120,15 @@ post '/upload' do
   # flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
   # slim :file_uploaded_ajax
 
-  filename = params['file'][:filename]
-  file = params['file'][:tempfile].path
-  time = timenow
-  flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
-  slim :file_uploaded, layout: :index
+  if params['file'].nil?
+    slim :no_file_specified, layout: :index
+  else
+    filename = params['file'][:filename]
+    file = params['file'][:tempfile].path
+    time = timenow
+    flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
+    slim :file_uploaded, layout: :index
+  end
 end
 
 not_found do

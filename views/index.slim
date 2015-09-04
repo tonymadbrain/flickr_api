@@ -34,9 +34,7 @@ html
           form(id="upload_form" method="post" enctype='multipart/form-data' action='/upload')
             input(type='file' name='file')
             br
-            input(type='submit' value='Upload' class="btn btn-success btn-block")
+            input(type='submit' value='Upload' class="btn btn-success")
       .row
         .col-md-10.col-md-offset-1
           == yield
-
-
