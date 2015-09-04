@@ -28,7 +28,10 @@ class BackgroundJob
   property :status, Boolean
 end
 
-DataMapper.auto_migrate! unless DataMapper.repository(:default).adapter.storage_exists?('files')
+unless DataMapper.repository(:default).adapter.storage_exists?('files')
+  DataMapper.auto_migrate!
+  BackgroundJob.create(status: false)
+end
 DataMapper.finalize
 
 def timenow
@@ -46,53 +49,91 @@ user = flickr_cred[:user]
 login = flickr.test.login
 
 #actions
-
 before do
   @files = Files.all
 end
 
+get '/test' do
+  status = BackgroundJob.get(1)
+  return status.to_json
+end
+
 get '/' do
-  # @files = Files.all
-  DataMapper.auto_migrate! if @files.nil?
-  @files = Files.all
   slim :list_files, layout: :index
 end
 
-get '/update' do
-  # @files = Files.all
-  BackgroundJob.create(status: false) unless BackgroundJob.get(1)
-  @job = BackgroundJob.get(1)
-  if @job.status
-    slim :updating_in_progress, layout: :index
+post '/update' do
+  # content_type :json
+  # {"params" => params}.to_json
+  if params['update'] != "true"
+    return 400
   else
-    Thread.new do
-      DataMapper.auto_migrate!
+    # BackgroundJob.create(status: false) unless BackgroundJob.get(1)
+    job = BackgroundJob.get(1)
+    if job.status
+      slim :updating_in_progress_ajax
+    else
+      Thread.new do
+        DataMapper.auto_migrate!
+        BackgroundJob.create(status: true)
 
-      begin
-        photos = flickr.photos.search(user_id: user)
+        begin
+          photos = flickr.photos.search(user_id: user)
 
-        photos.each do |photo|
-          info = flickr.photos.getInfo(photo_id: photo.id)
-          url = FlickRaw.url_o(info)
-          url_small = FlickRaw.url_t(info)
-          @file = Files.first_or_create(id: photo.id, filename: info["title"], url: url, preview: url_small)
-          @file.save!
+          photos.each do |photo|
+            info = flickr.photos.getInfo(photo_id: photo.id)
+            url = FlickRaw.url_o(info)
+            url_small = FlickRaw.url_t(info)
+            file = Files.first_or_create(id: photo.id, filename: info["title"], url: url, preview: url_small)
+            file.save!
+          end
+        rescue
+          job.update(status: false)
+          puts "###\nProblem with updating!\n###"
         end
-      rescue
-        @job.update(status: false)
-        puts "Problem with updating!"
+
+        job.update(status: false)
       end
 
-      @job.update(status: false)
+      job.update(status: true)
+      slim :updating_started_ajax
     end
-
-    @job.update(status: true)
-    slim :updating_started, layout: :index
   end
 end
 
+get '/update' do
+  # BackgroundJob.create(status: false) unless BackgroundJob.get(1)
+  # @job = BackgroundJob.get(1)
+  # if @job.status
+  #   slim :updating_in_progress, layout: :index
+  # else
+  #   Thread.new do
+  #     DataMapper.auto_migrate!
+
+  #     begin
+  #       photos = flickr.photos.search(user_id: user)
+
+  #       photos.each do |photo|
+  #         info = flickr.photos.getInfo(photo_id: photo.id)
+  #         url = FlickRaw.url_o(info)
+  #         url_small = FlickRaw.url_t(info)
+  #         @file = Files.first_or_create(id: photo.id, filename: info["title"], url: url, preview: url_small)
+  #         @file.save!
+  #       end
+  #     rescue
+  #       @job.update(status: false)
+  #       puts "Problem with updating!"
+  #     end
+
+  #     @job.update(status: false)
+  #   end
+
+  #   @job.update(status: true)
+  #   slim :updating_started, layout: :index
+  # end
+end
+
 post '/delete' do
-  # @files = Files.all
   # debug params
   # content_type :json
   # {"params" => params}.to_json
@@ -108,7 +149,6 @@ post '/delete' do
 end
 
 post '/upload' do
-  # @files = Files.all
   filename = params['myfile'][:filename]
   file = params['myfile'][:tempfile].path
   time = timenow

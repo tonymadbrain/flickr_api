@@ -11,15 +11,13 @@ html
     script src="js/bootstrap.min.js" type="text/javascript"
     javascript:
       $(function (){
-        var link = $('#delete_link');
-        link.on('click', function(e){
+        $('#delete_link').on('click', function(e){
          var check_item = $('input:checked','#delete_form'),
          _arr = [];
           e.preventDefault();
           check_item.each(function(item, index){
             _arr.push($(index).prop('value'));
           });
-          console.log(_arr);
           $.ajax({
             type: "POST",
             url: "/delete",
@@ -30,6 +28,21 @@ html
                 document.getElementById([value]).remove();
               });
               $('#alerts').html(data);
+            }
+          });
+        })
+        $('#update_link').on('click', function(e){
+          e.preventDefault();
+          $.ajax({
+            type: "POST",
+            url: "/update",
+            data: {"update":true},
+            dataType: "html",
+            success: function(data) {
+              $('#alerts').html(data);
+            },
+            error: function(xhr, status, error) {
+              $('#alerts').html("Some errors: " + error)
             }
           });
         })
@@ -49,7 +62,7 @@ html
             #navbar-ex-collapse.collapse.navbar-collapse
               span.navbar-brand style="margin-left: 50px;" id="alerts" #{@files.count} - записей!
               .nav.navbar-nav.navbar-right
-                a href="/update" class="btn btn-primary navbar-btn custom-navbar-buttons" Update
+                a href="#" id="update_link" class="btn btn-primary navbar-btn custom-navbar-buttons" Update
                 a href="#" id="delete_link" class="btn btn-danger navbar-btn custom-navbar-buttons" Delete
     .container-fluid style="margin-top: 50px;"
       .row
