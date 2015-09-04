@@ -119,20 +119,17 @@ post '/delete' do
 end
 
 post '/upload' do
-  content_type :json
-  {"params" => params}.to_json
-
   # filename = params['filename']
   # file = params['tempfile'] #.path method ?
   # time = timenow
   # flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
   # slim :file_uploaded_ajax
 
-  # filename = params['file'][:filename]
-  # file = params['file'][:tempfile].path
-  # time = timenow
-  # flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
-  # slim :file_uploaded, layout: :index
+  filename = params['file'][:filename]
+  file = params['file'][:tempfile].path
+  time = timenow
+  flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
+  slim :file_uploaded, layout: :index
 end
 
 not_found do
