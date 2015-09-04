@@ -63,15 +63,12 @@ get '/' do
 end
 
 post '/update' do
-  # content_type :json
-  # {"params" => params}.to_json
   if params['update'] != "true"
     return 400
   else
-    # BackgroundJob.create(status: false) unless BackgroundJob.get(1)
     job = BackgroundJob.get(1)
     if job.status
-      slim :updating_in_progress_ajax
+      slim :updating_in_progress
     else
       Thread.new do
         DataMapper.auto_migrate!
@@ -96,64 +93,46 @@ post '/update' do
       end
 
       job.update(status: true)
-      slim :updating_started_ajax
+      slim :updating_started
     end
   end
-end
-
-get '/update' do
-  # BackgroundJob.create(status: false) unless BackgroundJob.get(1)
-  # @job = BackgroundJob.get(1)
-  # if @job.status
-  #   slim :updating_in_progress, layout: :index
-  # else
-  #   Thread.new do
-  #     DataMapper.auto_migrate!
-
-  #     begin
-  #       photos = flickr.photos.search(user_id: user)
-
-  #       photos.each do |photo|
-  #         info = flickr.photos.getInfo(photo_id: photo.id)
-  #         url = FlickRaw.url_o(info)
-  #         url_small = FlickRaw.url_t(info)
-  #         @file = Files.first_or_create(id: photo.id, filename: info["title"], url: url, preview: url_small)
-  #         @file.save!
-  #       end
-  #     rescue
-  #       @job.update(status: false)
-  #       puts "Problem with updating!"
-  #     end
-
-  #     @job.update(status: false)
-  #   end
-
-  #   @job.update(status: true)
-  #   slim :updating_started, layout: :index
-  # end
 end
 
 post '/delete' do
   # debug params
   # content_type :json
   # {"params" => params}.to_json
-  begin
-    params['checkbox'].each do |i|
-      flickr.photos.delete(:photo_id => i)
-      Files.first(id: i).destroy
+  job = BackgroundJob.get(1)
+  if job.status
+    return 503
+  else
+    begin
+      params['checkbox'].each do |i|
+        flickr.photos.delete(:photo_id => i)
+        Files.first(id: i).destroy
+      end
+    rescue
+      slim :error_deleting
     end
-  rescue
-    slim :error_deleting
+    slim :file_deleted
   end
-  slim :file_deleted
 end
 
 post '/upload' do
-  filename = params['myfile'][:filename]
-  file = params['myfile'][:tempfile].path
-  time = timenow
-  flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
-  slim :file_uploaded, layout: :index
+  content_type :json
+  {"params" => params}.to_json
+
+  # filename = params['filename']
+  # file = params['tempfile'] #.path method ?
+  # time = timenow
+  # flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
+  # slim :file_uploaded_ajax
+
+  # filename = params['file'][:filename]
+  # file = params['file'][:tempfile].path
+  # time = timenow
+  # flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
+  # slim :file_uploaded, layout: :index
 end
 
 not_found do
