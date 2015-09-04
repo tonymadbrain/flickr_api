@@ -5,3 +5,4 @@
 *.sqlite3-journal
 *.db
 .DS_store
+.idea
