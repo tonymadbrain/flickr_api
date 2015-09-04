@@ -9,7 +9,7 @@ require File.expand_path(File.dirname(__FILE__) + '/config/sinatra')
 
 
 flickr_cred = YAML.load_file('./config/flickr.yml')
-DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/mydatabase.sqlite3")
+DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/flickr_api.db")
 
 #models
 class Files
