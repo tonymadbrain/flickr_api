@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'slim'
 require 'flickraw'
-require 'uri'
 require 'sinatra/reloader' if development?
 require 'yaml'
 require 'data_mapper'
