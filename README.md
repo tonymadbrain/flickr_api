@@ -1,5 +1,7 @@
 #Flickr wrapper
 
+##RU
+
 Данное приложение написано чтобы использовать flickr в качестве хранилища
 изображений для моего блога - http://doam.ru. Это простое приложение-обертка,
 написанное на sinatra, работающее через flickr API.
@@ -104,4 +106,6 @@ threads 1, 1
 
 По любым вопросам можете писать на <a href="mailto:mail@doam.ru?Subject=Flickr_API_Wrapper" target="_top">почту</a>.
 
+##EN
 
+In progress!
