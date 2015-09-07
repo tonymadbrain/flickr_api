@@ -30,12 +30,12 @@
 * ~~Generate only data and show through slim template~~
 * ~~Delete one file~~
 * ~~Updating in background~~
-* Pretty wiews?
 * ~~Some js for ajax~~
-* Upload many files in one time
 * ~~Selecting from DB~~
 * ~~Updating DB~~
 * ~~Deleting with DB~~
+* Pretty wiews?
+* Upload many files in one time
 * Rescue errors
 
 ###Для запуска:
