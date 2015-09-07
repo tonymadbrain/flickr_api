@@ -42,12 +42,13 @@ class Flickr_api < Sinatra::Base
   end
 
   #auth
-  FlickRaw.api_key = flickr_cred[:api_key]
+  FlickRaw.api_key       = flickr_cred[:api_key]
   FlickRaw.shared_secret = flickr_cred[:shared_secret]
-  flickr.access_token = flickr_cred[:access_token]
-  flickr.access_secret = flickr_cred[:access_secret]
-  user = flickr_cred[:user]
-  login = flickr.test.login
+  flickr.access_token    = flickr_cred[:access_token]
+  flickr.access_secret   = flickr_cred[:access_secret]
+  user                   = flickr_cred[:user]
+
+  flickr.test.login
 
   #actions
   before do
@@ -77,7 +78,12 @@ class Flickr_api < Sinatra::Base
               info = flickr.photos.getInfo(photo_id: photo.id)
               url = FlickRaw.url_o(info)
               url_small = FlickRaw.url_t(info)
-              file = Files.first_or_create(id: photo.id, filename: info["title"], url: url, preview: url_small)
+              file = Files.first_or_create(
+                id: photo.id,
+                filename: info["title"],
+                url: url,
+                preview: url_small
+              )
               file.save!
             end
           rescue
@@ -118,7 +124,12 @@ class Flickr_api < Sinatra::Base
     # filename = params['filename']
     # file = params['tempfile'] #.path method ?
     # time = timenow
-    # flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
+    # flickr.upload_photo(
+    #   "#{file}",
+    #   title: "#{filename}",
+    #   description: "#{filename} uploaded through API at #{time}!",
+    #   tags: "#{filename}"
+    # )
     # slim :file_uploaded_ajax
 
     if params['file'].nil?
@@ -127,7 +138,12 @@ class Flickr_api < Sinatra::Base
       filename = params['file'][:filename]
       file = params['file'][:tempfile].path
       time = timenow
-      flickr.upload_photo "#{file}", title: "#{filename}", description: "#{filename} uploaded through API at #{time}!", tags: "#{filename}"
+      flickr.upload_photo(
+        "#{file}",
+        title: "#{filename}",
+        description: "#{filename} uploaded through API at #{time}!",
+        tags: "#{filename}"
+      )
       slim :file_uploaded, layout: :index
     end
   end
