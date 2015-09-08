@@ -35,9 +35,10 @@ class Flickr_api < Sinatra::Base
   DataMapper.finalize
 
   def timenow
-    date_and_time = "%Y-%b-%d %H:%M:%S"
-    time          = Time.now.strftime(date_and_time)
-    return time
+    date_and_time = '%Y-%b-%d %H:%M:%S'
+    Time.now.strftime(date_and_time)
+    # time          = Time.now.strftime(date_and_time)
+    # return time
   end
 
   #auth
@@ -59,7 +60,7 @@ class Flickr_api < Sinatra::Base
   end
 
   post '/update' do
-    if params['update'] != "true"
+    if params['update'] != 'true'
       return 400
     else
       job = BackgroundJob.get(1)
@@ -79,7 +80,7 @@ class Flickr_api < Sinatra::Base
               url_small = FlickRaw.url_t(info)
               file = Files.first_or_create(
                 id: photo.id,
-                filename: info["title"],
+                filename: info['title'],
                 url: url,
                 preview: url_small
               )
@@ -155,4 +156,3 @@ end
 if __FILE__ == $0
   Flickr_api.run!
 end
-
