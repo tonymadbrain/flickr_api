@@ -37,19 +37,4 @@ $(function (){
       }
     });
   })
-  // $('#upload_form').on('submit', function(e){
-  //   e.preventDefault();
-  //   $.ajax({
-  //     type: "POST",
-  //     url: "/upload",
-  //     data: $(this).serialize(),
-  //     dataType: "html",
-  //     success: function(data) {
-  //       $('#alerts').html(data);
-  //     },
-  //     error: function(xhr, status, error) {
-  //       $('#alerts').html("Some errors: " + error)
-  //     }
-  //   });
-  // })
 });

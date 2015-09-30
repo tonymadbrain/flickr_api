@@ -37,8 +37,6 @@ class Flickr_api < Sinatra::Base
   def timenow
     date_and_time = '%Y-%b-%d %H:%M:%S'
     Time.now.strftime(date_and_time)
-    # time          = Time.now.strftime(date_and_time)
-    # return time
   end
 
   #auth
@@ -70,6 +68,7 @@ class Flickr_api < Sinatra::Base
         Thread.new do
           DataMapper.auto_migrate!
           BackgroundJob.create(status: true)
+          job = BackgroundJob.get(1)
 
           begin
             photos = flickr.photos.search(user_id: user)
@@ -105,7 +104,7 @@ class Flickr_api < Sinatra::Base
     # {"params" => params}.to_json
     job = BackgroundJob.get(1)
     if job.status
-      return 503
+      return 'Database is locked'
     else
       begin
         params['checkbox'].each do |i|
