@@ -104,7 +104,9 @@ class Flickr_api < Sinatra::Base
     # {"params" => params}.to_json
     job = BackgroundJob.get(1)
     if job.status
-      return 'Database is locked'
+      status 503
+      body 'Database is locked'
+      # return 'Database is locked'
     else
       begin
         params['checkbox'].each do |i|
