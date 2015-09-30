@@ -94,7 +94,6 @@ class Flickr_api < Sinatra::Base
           job.update(status: false)
         end
 
-        job.update(status: true)
         slim :updating_started
       end
     end
