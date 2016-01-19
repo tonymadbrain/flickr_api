@@ -71,7 +71,7 @@ class Flickr_api < Sinatra::Base
           job = BackgroundJob.get(1)
 
           begin
-            photos = flickr.photos.search(user_id: user)
+            photos = flickr.photos.search(user_id: user, per_page: 500)
 
             photos.each do |photo|
               info = flickr.photos.getInfo(photo_id: photo.id)
