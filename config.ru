@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require './main'
+require './app'
 
 run Flickr_api
