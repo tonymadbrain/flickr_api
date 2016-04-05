@@ -44,8 +44,7 @@ def timenow
 end
 
 #auth
-FlickRaw.secure = false
-# FlickRaw.check_certificate = false
+FlickRaw.check_certificate = false
 FlickRaw.api_key       = flickr_cred[:api_key]
 FlickRaw.shared_secret = flickr_cred[:shared_secret]
 flickr.access_token    = flickr_cred[:access_token]
