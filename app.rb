@@ -140,10 +140,13 @@ post '/upload' do
     slim :no_file_specified, layout: :index
   else
     filename = params['file'][:filename]
-    file = params['file'][:tempfile].path
+    file_path = 'public/uploads/' + filename
+    File.open(file_path, 'w') do |f|
+      f.write(params['file'][:tempfile].read)
+    end
     time = timenow
     flickr.upload_photo(
-      "#{file}",
+      file_path,
       title: "#{filename}",
       description: "#{filename} uploaded through API at #{time}!",
       tags: "#{filename}"

@@ -2,6 +2,7 @@
 /img
 /.bundle
 /public/index.html
+/public/uploads/*
 *.sqlite3
 *.sqlite3-journal
 *.db
