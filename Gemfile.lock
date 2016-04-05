@@ -59,7 +59,6 @@ GEM
     json (1.8.3)
     json_pure (1.8.2)
     multi_json (1.11.2)
-    puma (2.13.4)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -91,7 +90,9 @@ DEPENDENCIES
   data_mapper
   dm-sqlite-adapter
   flickraw
-  puma
   sinatra
   sinatra-contrib
   slim
+
+BUNDLED WITH
+   1.11.2
