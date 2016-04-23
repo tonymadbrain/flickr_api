@@ -44,8 +44,8 @@ def timenow
 end
 
 #auth
-FlickRaw.secure       = true
-FlickRaw.ca_path = '/etc/ssl/certs'
+#FlickRaw.secure       = true
+#FlickRaw.ca_path = '/etc/ssl/certs'
 FlickRaw.api_key       = flickr_cred[:api_key]
 FlickRaw.shared_secret = flickr_cred[:shared_secret]
 flickr.access_token    = flickr_cred[:access_token]
